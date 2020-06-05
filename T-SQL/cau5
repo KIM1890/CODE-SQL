@@ -1,0 +1,99 @@
+--thuc hien lay ra 3 thang gian nhat
+SELECT
+	*
+FROM ORDERs o
+WHERE o.order_date >= DATEADD(MONTH, -3, GETDATE())
+GO
+SELECT DATEADD(MONTH, -3, GETDATE())
+-----------------cach thuc hien thu 2------------------------
+SELECT
+	o.customer_id
+FROM orders o 
+LEFT JOIN order_detail od
+	ON o.order_id = od.order_id
+LEFT JOIN order_detail
+	ON o.order_id <> od.order_id
+WHERE ((MONTH(order_date) = 1
+AND YEAR(order_date) = 2016)
+AND (MONTH(order_date) = 2
+AND YEAR(order_date) = 2016))
+
+go
+--kiem tra dieu kien truoc khi select
+DECLARE @id INT
+SET @id = (SELECT
+		*
+	FROM Q5)
+PRINT @id
+DECLARE @parent_id INT = (SELECT
+		parent_id
+	FROM Q5)
+IF (@id = @parent_id)
+BEGIN
+	WITH cte (idn, namen, parent_idn)
+	AS
+	(SELECT
+			id
+		   ,Name
+		   ,parent_id
+		FROM dbo.Q5
+		WHERE id = 1
+		AND parent_id IS NULL
+		UNION ALL
+		SELECT
+			q1.id
+		   ,q1.Name
+		   ,q1.parent_id
+		FROM dbo.Q5 q1
+		INNER JOIN cte q2
+			ON q2.idn = q1.parent_id)
+	SELECT
+		CAST(cte.namen AS NVARCHAR(50)) AS dep_name
+	FROM cte
+END
+
+GO
+SELECT
+	*
+FROM dbo.Q5
+--cau 5
+--CAU 5
+WITH cte (idn, namen, parent_idn)
+AS
+(SELECT
+		id
+	   ,Name
+	   ,parent_id
+	FROM dbo.Q5
+	WHERE parent_id IS NULL
+	UNION ALL
+	SELECT
+		q1.id
+	   ,q1.Name
+	   ,q1.parent_id
+	FROM dbo.Q5 q1
+	INNER JOIN cte q2
+		ON q2.idn = q1.parent_id)
+SELECT
+	CAST(cte.namen AS NVARCHAR(50)) AS dep_name
+FROM cte
+GO
+WITH cte (idn, namen, parent_idn)
+AS
+(SELECT
+		id
+	   ,Name
+	   ,parent_id
+	FROM dbo.Q5
+	UNION ALL
+	SELECT
+		q1.id
+	   ,q1.Name
+	   ,q1.parent_id
+	FROM dbo.Q5 q1
+	INNER JOIN cte q2
+		ON q2.idn = q1.parent_id)
+SELECT
+	CAST(cte.namen AS NVARCHAR(50)) AS dep_name
+FROM cte
+GO

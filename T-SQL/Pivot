@@ -1,0 +1,56 @@
+--GO
+--SELECT a.Order_id, a.statuss,a.created_at FROM(
+--SELECT * FROM  dbo.sales_flat_order_status_history h
+-- PIVOT(min(created_at) FOR statuss 
+-- IN ([New]  ,[Processing],[chua VC],[Transporting],[chua hoan thanh],[complete])) AS bangchuyen
+-- ) A
+--GO
+--IF( @status='New')
+--BEGIN
+--	SET @status='Chua VC'
+--	SELECT a.Order_id, a.statuss,a.created_at FROM(
+--	SELECT * FROM  dbo.sales_flat_order_status_history h
+--	 PIVOT(min(created_at) FOR statuss 
+--	 IN ([New]  ,[Processing],[@status],[Transporting],[complete])) AS bangchuyen
+--	 ) A
+-- END
+-- IF(@status='processing' AND @status='New')
+-- BEGIN
+-- 	SET @status='chua hoan thanh'
+--	SELECT a.Order_id, a.statuss,a.created_at FROM(
+--	SELECT * FROM  dbo.sales_flat_order_status_history h
+--	 PIVOT(min(created_at) FOR statuss 
+--	 IN ([New]  ,[Processing],[@status],[Transporting],[complete])) AS bangchuyen
+--	 ) A
+-- END
+-- GO
+
+--C1 USE case
+ 
+  -- C3 USE LEFT join
+ -- SELECT a.Order_id,a.New,B.processing,c.[Chua VC],d.Transporting,e.[chua hoan thanh],f.complete FROM (
+ -- SELECT Order_id, created_at AS 'New' FROM dbo.sales_flat_order_status_history WHERE statuss = 'New' ) a
+ -- LEFT JOIN  (SELECT Order_id, created_at AS 'processing' FROM dbo.sales_flat_order_status_history WHERE statuss = 'processing') AS B
+ -- ON a.Order_id = b.Order_id
+ -- LEFT JOIN (SELECT Order_id,created_at AS 'Chua VC' FROM dbo.sales_flat_order_status_history WHERE statuss='Chua VC') c
+ --ON c.Order_id = a.Order_id
+ --LEFT JOIN (SELECT Order_id,created_at AS 'Transporting' FROM dbo.sales_flat_order_status_history WHERE statuss='Transporting') d
+ --ON d.Order_id = c.Order_id
+ --LEFT JOIN (SELECT Order_id,created_at AS 'chua hoan thanh' FROM dbo.sales_flat_order_status_history WHERE statuss='chua hoan thanh')e
+ --ON e.Order_id = d.Order_id
+ --LEFT JOIN (SELECT Order_id,created_at AS 'complete' FROM dbo.sales_flat_order_status_history WHERE statuss='complete') AS f
+ --ON f.Order_id = e.Order_id
+ --GO
+ --SELECT order_id AS [@order_id],order_quantity,dbo.order_detail
+ --FROM dbo.order_detail
+ 
+ go
+ SELECT
+	A.Order_id
+   ,A.statuss
+   ,A.created_at
+FROM (SELECT
+		*
+	FROM dbo.sales_flat_order_status_history h
+	PIVOT (MIN(created_at) FOR statuss
+	IN ([New], [Processing], [chua VC], [Transporting], [chua hoan thanh], [complete])) AS bangchuyen) A

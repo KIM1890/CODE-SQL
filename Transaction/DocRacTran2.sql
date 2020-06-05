@@ -1,0 +1,13 @@
+GO
+USE BANKING
+GO
+CREATE PROCEDURE XemTien(@mtk INT)	
+AS
+BEGIN
+	--kiem tra tai khoan
+	BEGIN TRANSACTION
+		SELECT sotien FROM ATM WHERE matk = @mtk
+	END
+		
+END
+

@@ -1,0 +1,2 @@
+CREATE FUNCTION table_order(@mdh INT)
+	RETURNS INT
